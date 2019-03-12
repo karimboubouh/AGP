@@ -1,2 +1,2 @@
 # AG
-Implementation of a distributed Graph API using Actors
+Implementation of a distributed core.Graph API using Actors
