@@ -7,6 +7,4 @@ trait Graph {
   def updateNode(key : Any, )
   def getSubGraph(key : Any) : List[Node]
 
-
-
 }
