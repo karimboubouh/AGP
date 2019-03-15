@@ -1,14 +1,13 @@
 package core
 
-import akka.actor.Actor
-import core.AProtocol.generateConfFile
+import akka.actor.{Actor, Props}
 object AProtocol{
-  case class generateConfFile(host:String,ip:String,port:Int)
+
 }
-class GraphActor(name:String,graph: List[Any],host:String,ip:String,port:Int) extends Actor{
+class GraphActor(name:String,graph: List[Any]) extends Actor{
   override def receive: Receive = {
-    case generateConfFile(host,ip,port)=>
-      //TODO generate configuration File
+    case _=>
+      println("unknown operation")
   }
 
 }

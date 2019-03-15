@@ -1,15 +1,18 @@
 package core
 
-import akka.actor.Actor
+import akka.actor.{Actor, Props}
 import core.AGProtocol.generateActor
 
 
 object AGProtocol {
-  case class generateActor(name:String,graph:List[Any],host:String,ip:String,port:Int)
+  case class generateActor(name:String,graph:List[Any])
 }
 class ActorGenerator extends Actor{
   override def receive: Receive = {
-    case generateActor(name,praph,host,ip,port)=>
-      //TODO generate actor & file confugaration
+    case generateActor(name,graph)=>
+      val ag=context.actorOf(Props(classOf[GraphActor],name,graph),name+"Actor")
+      sender ! ag
+    case _=>
+      println("unknown operation")
   }
 }
