@@ -1,10 +1,12 @@
 package cluster
 
-import akka.actor.{Actor, ActorSystem, Props, RootActorPath}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props, RootActorPath}
 import akka.cluster.ClusterEvent.MemberUp
 import akka.cluster._
 import cluster.GWProtocol._
 import com.typesafe.config.ConfigFactory
+import scalax.collection.GraphEdge.UnDiEdge
+import scalax.collection.mutable.Graph
 
 class GWorker extends Actor {
 
@@ -34,10 +36,10 @@ class GWorker extends Actor {
 }
 
 object GWorker {
-  def initiate(port: Int) = {
+  def initiate(port: Int, subGraph : Graph[Any, UnDiEdge]): ActorRef = {
     val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=$port").
       withFallback(ConfigFactory.load().getConfig("GWorker"))
     val system = ActorSystem("ClusterSystem", config)
-    val GWorker = system.actorOf(Props[GWorker], name = "GWorker")
+    return system.actorOf(Props(classOf[GWorker], subGraph), s"GWorker-${port}")
   }
 }
