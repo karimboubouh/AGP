@@ -26,7 +26,7 @@ class GWorker(subGraph: Graph[Node, UnDiEdge]) extends Actor with Serializable {
     cluster.subscribe(self, classOf[MemberUp])
     context.system.scheduler.schedule(10 seconds, 20 seconds) {
       println("************************************||__--> preStart")
-      persistWorkerState()
+      persistWorkerState(g)
     }
   }
 
@@ -57,7 +57,7 @@ class GWorker(subGraph: Graph[Node, UnDiEdge]) extends Actor with Serializable {
   override def preRestart(reason: Throwable, message: Option[Any]): Unit = {
     val t = new Timer()
     val task = new TimerTask {
-      def run() = persistWorkerState()
+      def run() = persistWorkerState(g)
     }
     t.schedule(task, 10000L, 10000L)
     //task.cancel()
@@ -71,20 +71,18 @@ class GWorker(subGraph: Graph[Node, UnDiEdge]) extends Actor with Serializable {
     return null
   }
 
-  def persistWorkerState(): Unit = {
-    // (1) create a Stock instance
-    val nflx = new GWorker(subGraph)
+  def persistWorkerState(state : Graph[Node, UnDiEdge]): Unit = {
     // (2) write the instance out to a file
     val oos = new ObjectOutputStream(new FileOutputStream("/tmp/GWorker"))
-    oos.writeObject(nflx)
+    oos.writeObject(state)
     oos.close
     // (3) read the object back in
     val ois = new ObjectInputStream(new FileInputStream("/tmp/GWorker"))
-    val stock = ois.readObject.asInstanceOf[Actor]
+    val restoredState = ois.readObject.asInstanceOf[Graph[Node, UnDiEdge]]
     ois.close
     // (4) print the object that was read back in
     println("worker has been stored")
-    println(stock)
+    println(restoredState)
   }
 }
 
