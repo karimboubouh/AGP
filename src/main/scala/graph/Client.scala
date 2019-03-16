@@ -5,8 +5,10 @@ import scalax.collection.generator.{NodeDegreeRange, RandomGraph}
 import scalax.collection.mutable.Graph
 import scalax.collection.edge.LDiEdge
 
+case class Node(nodeId: Int, name: String, balance: Int, subGraphId: Int)
 
 class Client{
+
   var counter = 0
 
   object ClientData {
@@ -16,15 +18,13 @@ class Client{
     val surnames = Set("Bell", "Brown", "Clark", "Cox", "King", "Lee", "Moore", "Ross", "Smith", "Wong").to[Vector]
     val surnamesSize = surnames.size
 
-    def order = firstNamesSize * surnamesSize / 10
+//    def order = firstNamesSize * surnamesSize / 10
+    def order = 5
     def degrees = new NodeDegreeRange(2, order - 2)
   }
 
-  case class Node(nodeId: Int, name: String, balance: Int, subGraphId: Int)
-
-  object Node {
+  object NodeObject {
     import ClientData._
-
     private val r = new scala.util.Random
     def drawFirstName: String = firstNames(r.nextInt(firstNamesSize))
     def drawSurame: String = surnames(r.nextInt(surnamesSize))
@@ -39,15 +39,14 @@ class Client{
           val order = ClientData.order
           val nodeDegrees = ClientData.degrees
           def nodeGen: Node = {
+            val x = Node(nodeId, NodeObject.drawName, NodeObject.drawBalance, subGraphId)
             nodeId += 1
-            Node(nodeId, Node.drawName, Node.drawBalance, subGraphId)
+            return x
           }
         },
         Set(UnDiEdge, LDiEdge)
       )
     val mixedGraph = randomMixedGraph.draw
-    println(mixedGraph.nodes)
-
     return (mixedGraph, nodeId)
   }
 }
