@@ -51,10 +51,10 @@ This represents the main object that runs the application. When initiated, it cr
 
 
 # Team Members: 
-BOUBOUH Karim
-BOUAYAD Abdelhak
-BENTACHFINE Ilyas
-ABDULSALAM Yunusa Simpa
+BOUBOUH Karim <br/>
+BOUAYAD Abdelhak <br/>
+BENTACHFINE Ilyas <br/>
+ABDULSALAM Yunusa Simpa <br/>
 
 
 
