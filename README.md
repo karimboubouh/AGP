@@ -2,7 +2,7 @@
 
 Implementation of a distributed CoreGraph API using PersistentActors: 
 
-Akka persistence is a concept that enables stateful actors to persist their state so that it can be recovered when an actor is restarted, this can happen either through a JVM crashing, or a manual stop-start by a supervisor. The key idea behind the implementation is that actors are able to recover the states of the system even after a crash. Note that only states received by the actors are persisted, not the actual state of the actor. The states persisted are journalled messages which are then replayed back to the actors by appending to storage which allows for very high transaction rates and efficient replication. A stateful actor is then recovered by replaying the stored states from the snapshots to the actor, allowing it to rebuild its new state.
+Akka persistence is a concept that enables stateful actors to persist their state so that it can be recovered when an actor is restarted, this can happen either through a JVM crashing, or a manual stop-start by a supervisor. The key idea behind the implementation is that actors are able to recover the states of the system even after a crash A stateful actor is then recovered by replaying the stored states from the snapshots to the actor, allowing it to rebuild its new state.
 
 
 
@@ -15,13 +15,10 @@ The CoreGraph adopts the concept of directed relationship to store informamtion 
 <img width="527" alt="Screenshot 2019-03-17 at 17 59 02" src="https://user-images.githubusercontent.com/27771844/54494947-63244280-48d7-11e9-89b9-2c3955a38a89.png">
 
 
-<img width="527" alt="Screenshot 2019-03-17 at 17 54 02" src="https://user-images.githubusercontent.com/27771844/54494943-628bac00-48d7-11e9-98c1-f95965a48263.png">
 
+PersistentActor: Is a persistent, stateful actor that is able to persist events and restore actor states after 20 seconds. After which messages are been replayed to that actor so that it can recover its state from these messages.
 
-
-PersistentActor: Is a persistent, stateful actor that is able to persist events to a journal and can react to them in a thread-safe manner. It can be used to implement both command as well as events sourced actors. When a persistent actor is started or restarted, journaled messages are replayed to that actor so that it can recover its state from these messages.
-
-<img width="527" alt="Screenshot 2019-03-17 at 17 58 10" src="https://user-images.githubusercontent.com/27771844/54494946-63244280-48d7-11e9-8abc-cec0232df411.png">
+<img width="527" alt="Screenshot 2019-03-17 at 19 21 31" src="https://user-images.githubusercontent.com/27771844/54495969-953aa200-48e1-11e9-93ad-14970d742ced.png">
 
 
 
