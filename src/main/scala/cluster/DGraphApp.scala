@@ -5,6 +5,7 @@ import cluster.GWProtocol._
 import graph.Client
 
 import scala.collection.mutable.{ListBuffer, Map}
+import scala.util.Random
 
 object DGraphApp extends App {
 
@@ -18,15 +19,22 @@ object DGraphApp extends App {
   var workers = generateGraphs(2)
 
   // send map to orchestrator
-  Orchestrator.getOrchestrator ! mapWorkers(mappedWorkers)
+  val or = Orchestrator.getOrchestrator
+  or ! mapWorkers(mappedWorkers)
 
   // wait for actors to initialize
-  Thread.sleep(5000)
+  Thread.sleep(2000)
 
-  // send requests
-  Orchestrator.getOrchestrator ! getNode(4, Orchestrator.getOrchestrator)
+  // send requests and Exceptions
+  for (i <- 1 to 100){
+    val x = Random.nextInt(workers.size)
+    val id = Random.nextInt(100)
+    workers(x) ! "Exception"
+    workers(x) ! getNode(id, or)
+  }
 
   // ------------------------- Functions -------------------------
+
   def generateGraphs(workersNumber: Int): ListBuffer[ActorRef] = {
     // generate $workersNumber random graphs and workers
     var workers = ListBuffer[ActorRef]()

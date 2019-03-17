@@ -1,17 +1,18 @@
 package cluster
 
 import java.io._
-import java.util.{Timer, TimerTask}
-import scala.concurrent.duration._
+
 import akka.actor.{Actor, ActorRef, ActorSystem, Props, RootActorPath}
 import akka.cluster.ClusterEvent.MemberUp
 import akka.cluster._
 import cluster.GWProtocol._
-import scala.concurrent.ExecutionContext.Implicits.global
 import com.typesafe.config.ConfigFactory
 import graph.Node
 import scalax.collection.GraphEdge.UnDiEdge
 import scalax.collection.mutable.Graph
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 class GWorker(subGraph: Graph[Node, UnDiEdge]) extends Actor with Serializable {
 
@@ -21,28 +22,34 @@ class GWorker(subGraph: Graph[Node, UnDiEdge]) extends Actor with Serializable {
   // Cluster initiate
   val cluster = Cluster(context.system)
 
+  // ---------------------- Actor Events --------------------------------------
   // subscribe to cluster changes, MemberUp & re-subscribe when restart
   override def preStart(): Unit = {
     cluster.subscribe(self, classOf[MemberUp])
-    context.system.scheduler.schedule(10 seconds, 20 seconds) {
-      println("************************************||__--> preStart")
-      persistWorkerState(g)
+    context.system.scheduler.schedule(0 seconds, 20 seconds) {
+      persistWorkerState(self.path.name, g)
     }
   }
 
+  override def preRestart(reason: Throwable, message: Option[Any]): Unit = {
+    g = restoreWorkerState(self.path.name)
+    println("State restored from disk!")
+  }
+
   override def postStop(): Unit = {
+    println("i'm about to stop....")
     cluster.unsubscribe(self)
   }
 
+  // ------------------------- Message handling -------------------------------
   def receive = {
     case getNode(id, client) =>
-      println("-------------------------------------> " + id + " ----------- " + client)
       val node = findNode(id)
       if (node != null) {
-        println("------------------------> " + node.getClass)
+        // TODO first message doesn't get received by the clients !
+        client ! ""
         client ! response(node)
       } else {
-        println("------------------------> " + node)
         client ! error(s"Node doesn't exist in actor ${self.path}")
       }
     case deleteNode(id) =>
@@ -52,17 +59,12 @@ class GWorker(subGraph: Graph[Node, UnDiEdge]) extends Actor with Serializable {
         context.actorSelection(RootActorPath(member.address) / "user" / "Orchestrator") !
           registerWorker
       }
+    case "Exception" =>
+      println("Received Exception ! from " + sender.path)
+      throw new Exception("Boom!")
   }
 
-  override def preRestart(reason: Throwable, message: Option[Any]): Unit = {
-    val t = new Timer()
-    val task = new TimerTask {
-      def run() = persistWorkerState(g)
-    }
-    t.schedule(task, 10000L, 10000L)
-    //task.cancel()
-  }
-
+  // ------------------------- Local Actor Functions --------------------------
   def findNode(id: Int): Node = {
     for (x <- g.nodes.toIterator) {
       if (x.value.nodeId == id)
@@ -71,19 +73,21 @@ class GWorker(subGraph: Graph[Node, UnDiEdge]) extends Actor with Serializable {
     return null
   }
 
-  def persistWorkerState(state : Graph[Node, UnDiEdge]): Unit = {
-    // (2) write the instance out to a file
-    val oos = new ObjectOutputStream(new FileOutputStream("/tmp/GWorker"))
+  def persistWorkerState(file: String, state: Graph[Node, UnDiEdge]): Unit = {
+    val oos = new ObjectOutputStream(new FileOutputStream("/tmp/" + file))
+    oos.reset()
     oos.writeObject(state)
+    oos.reset()
     oos.close
-    // (3) read the object back in
-    val ois = new ObjectInputStream(new FileInputStream("/tmp/GWorker"))
+  }
+
+  def restoreWorkerState(file: String): Graph[Node, UnDiEdge] = {
+    val ois = new ObjectInputStream(new FileInputStream("/tmp/" + file))
     val restoredState = ois.readObject.asInstanceOf[Graph[Node, UnDiEdge]]
     ois.close
-    // (4) print the object that was read back in
-    println("worker has been stored")
-    println(restoredState)
+    return restoredState
   }
+
 }
 
 object GWorker {
