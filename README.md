@@ -41,11 +41,12 @@ Ochestrator is like the master that controls the entire graph, this maintains th
 <img width="527" alt="Screenshot 2019-03-17 at 17 56 13" src="https://user-images.githubusercontent.com/27771844/54494944-628bac00-48d7-11e9-8235-f32f54fc1440.png">
 
 
+# How it runs
+DGraphApp.
+This represents the main object that runs the application. When initiated, it creates an instance of the ochestrator, and a number of workers (line 19: 100) depending on the graph size.  
 
-DirectedGraphApplication.
-The direct graph 
+<img width="527" alt="Screenshot 2019-03-17 at 19 21 31" src="https://user-images.githubusercontent.com/27771844/54495969-953aa200-48e1-11e9-93ad-14970d742ced.png">
 
-<img width="527" alt="Screenshot 2019-03-17 at 17 51 57" src="https://user-images.githubusercontent.com/27771844/54494942-628bac00-48d7-11e9-9556-5628b17bccaf.png">
 
 
  
