@@ -46,6 +46,19 @@ This represents the main object that runs the application. When initiated, it cr
 
 
 
+
+
+
+
+# Team Members: 
+BOUBOUH Karim
+BOUAYAD Abdelhak
+BENTACHFINE Ilyas
+ABDULSALAM Yunusa Simpa
+
+
+
+
  
 
 
