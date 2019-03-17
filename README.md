@@ -18,7 +18,7 @@ The CoreGraph adopts the concept of directed relationship to store informamtion 
 
 PersistentActor: Is a persistent, stateful actor that is able to persist events and restore actor states after 20 seconds. After which messages are been replayed to that actor so that it can recover its state from these messages.
 
-<img width="527" alt="Screenshot 2019-03-17 at 19 21 31" src="https://user-images.githubusercontent.com/27771844/54495969-953aa200-48e1-11e9-93ad-14970d742ced.png">
+<img width="606" alt="Screenshot 2019-03-17 at 19 33 37" src="https://user-images.githubusercontent.com/27771844/54496108-5f96b880-48e3-11e9-87a4-f82344f63891.png">
 
 
 
