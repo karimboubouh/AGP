@@ -8,5 +8,30 @@ Akka persistence enables stateful actors to persist their state so that it can b
 
 # How it works
 
+Graph protocol
+
 The CoreGraph adopts the concept of Undirected relationship to store informamtion between node, all edge are discovered through shared informamtion by nodes,  
+
+
+
+PersistentActor: Is a persistent, stateful actor that is able to persist events to a journal and can react to them in a thread-safe manner. It can be used to implement both command as well as event sourced actors. When a persistent actor is started or restarted, journaled messages are replayed to that actor so that it can recover its state from these messages.
+
+
+
+Serializing an actor
+// create a serializable Stock class
+@SerialVersionUID(123L)
+class Actor(var symbol: String, var price: BigDecimal) extends Serializable {
+  override def toString = f"$symbol%s is ${price.toDouble}%.2f"
+  
+
+Ochestrator
+
+DirectedGraphApplication
+ 
+
+
+
+
+
 
