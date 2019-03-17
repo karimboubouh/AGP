@@ -16,7 +16,7 @@ object DGraphApp extends App {
   Orchestrator.initiate()
 
   // generate graph and start a worker per subGraph
-  var workers = generateGraphs(2)
+  var workers = generateGraphs(100)
 
   // send map to orchestrator
   val or = Orchestrator.getOrchestrator
